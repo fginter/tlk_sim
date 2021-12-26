@@ -1,4 +1,16 @@
 import usb_hid
+import board
+import digitalio
+import storage
+
+write_pin = digitalio.DigitalInOut(board.GP0)
+write_pin.direction = digitalio.Direction.INPUT
+write_pin.pull = digitalio.Pull.UP
+
+# If write pin is connected to ground on start-up, CircuitPython can write to CIRCUITPY filesystem.
+if not write_pin.value:
+    storage.remount("/", readonly=False)
+
 
 # This is only one example of a gamepad descriptor, and may not suit your needs.
 GAMEPAD_REPORT_DESCRIPTOR = bytes((
@@ -39,3 +51,4 @@ gamepad = usb_hid.Device(
 usb_hid.enable(
     (gamepad,)
 )
+
